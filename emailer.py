@@ -15,6 +15,7 @@ class Emailer:
     async def _get_connection(self):
         if not self.pool:
             return await aiosmtplib.SMTP(hostname=self.host, port=self.port, use_tls=self.use_tls)
+            await smtp.login(self.username, self.password)
         else:
             return self.pool.pop()
 
@@ -33,7 +34,6 @@ class Emailer:
 
         smtp = await self._get_connection()
         try:
-            await smtp.login(self.username, self.password)
             await smtp.send_message(message)
         finally:
             await self._release_connection(smtp)
